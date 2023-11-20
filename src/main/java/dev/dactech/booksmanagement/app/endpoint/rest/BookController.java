@@ -6,26 +6,25 @@ import dev.dactech.booksmanagement.infrastructure.dto.response.ResponseBase;
 import dev.dactech.booksmanagement.infrastructure.utilies.MessageCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import static dev.dactech.booksmanagement.app.service.ResponseFactory.creationResponse;
-import static dev.dactech.booksmanagement.app.service.ResponseFactory.response;
-
+import static dev.dactech.booksmanagement.app.service.ResponseFactory.*;
 @RestController
-@RequestMapping("/api/books/")
+@RequestMapping("/api")
 public class BookController {
 
     @Autowired
     private BookService bookService;
 
-    @PostMapping
-    public ResponseEntity<ResponseBase> add(@RequestBody BookCreationReq req){
+    @PostMapping()
+    public ResponseEntity<ResponseBase<Object>> add(@RequestBody BookCreationReq req){
         if (bookService.add(req)){
             return creationResponse();
         }else
             return response(MessageCode.ERROR_BOOK_CREATION);
+    }
+    @GetMapping(value = "/books", produces = "application/json")
+    public ResponseEntity<ResponseBase<String>> display(){
+        return response("Hello");
     }
 }
