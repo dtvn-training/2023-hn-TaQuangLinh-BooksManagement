@@ -1,10 +1,8 @@
 package dev.dactech.booksmanagement.infrastructure.utilies;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
 
+@Getter
 public enum MessageCode {
     DUPLICATE (400, "DUPLICATE", "Loi..."),
     EXIST(411, "EXIST", "Tai khoan da ton tai"),
