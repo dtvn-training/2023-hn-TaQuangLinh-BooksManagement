@@ -17,7 +17,7 @@ public class BookService {
 
     public boolean add(BookCreationReq req){
         Book book = Book.builder()
-                .name(req.getName())
+                .title(req.getName())
                 .build();
         try{
             bookRepository.save(book);
