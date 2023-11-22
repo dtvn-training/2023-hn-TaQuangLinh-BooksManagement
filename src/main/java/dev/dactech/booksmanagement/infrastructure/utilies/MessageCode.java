@@ -5,9 +5,16 @@ import lombok.Getter;
 @Getter
 public enum MessageCode {
     DUPLICATE (400, "DUPLICATE", "Loi..."),
-    EXIST(411, "EXIST", "Tai khoan da ton tai"),
+    EXIST(499, "EXIST", "Tai khoan da ton tai"),
     SUCCESS(200, "SUCCESS", "Thành công"),
-    ERROR_BOOK_CREATION(401, "ERROR_CREATION", "Thêm mới sách không thành công"),
+    FAIL(401, "FAIL", "Thất bại"),
+    ERROR_BOOK_CREATION(402, "ERROR_CREATION", "Thêm mới book không thành công"),
+    MISSING_CATEGORY_FIELD(403, "MISSING_CATEGORY_FIELD", "Không được để trống trường category"),
+    MISSING_QUANTITY_FIELD(405, "MISSING_QUANTITY_FIELD", "Không được để trống trường quantity"),
+    MISSING_LIBRARIAN_FIELD(406, "MISSING_LIBRARIAN_FIELD", "Không được để trống trường librarian"),
+    MISSING_LIMIT_DATE_FIELD(407, "MISSING_LIMIT_DATE_FIELD", "Không được để trống trường limit date"),
+    MISSING_TITLE_FIELD(408, "MISSING_TITLE_FIELD", "Không được để trống trường title"),
+    ERROR_BOOK_CATEGORY_CREATION(409, "ERROR_BOOK_CATEGORY_CREATION", "Thêm mới book category không thành công"),
     ;
     private int code;
     private String message;

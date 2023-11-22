@@ -27,10 +27,10 @@ public class Book {
     private String title;
 
     @Column(name = "category_id", nullable = false)
-    private Integer category;
+    private Integer categoryId;
 
-    @Column
-    private String author;
+    @Column(name = "authors")
+    private String authors;
 
     @Column(name = "publishing_date")
     private LocalDateTime publishingDate;

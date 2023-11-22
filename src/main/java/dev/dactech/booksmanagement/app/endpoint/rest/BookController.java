@@ -24,10 +24,8 @@ public class BookController {
 
     @PostMapping("")
     public ResponseEntity<?> add(@RequestBody BookCreationReq req){
-        if (bookService.add(req)){
-            return creationResponse();
-        }else
-            return response(MessageCode.ERROR_BOOK_CREATION);
+        System.out.println(req);
+        return response(bookService.add(req));
     }
     @GetMapping("")
     public ResponseEntity<ResponseList<Book>> getAll(){
