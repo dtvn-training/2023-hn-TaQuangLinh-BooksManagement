@@ -1,11 +1,9 @@
-package dev.dactech.booksmanagement.domain.book.dto.response;
+package dev.dactech.booksmanagement.infrastructure.dto.response;
 
 import lombok.Builder;
-import lombok.Data;
 
-@Data
 @Builder
-public class BooksRes {
+public class BooksResDTO {
     private Integer id;
     private String title;
     private String category;
