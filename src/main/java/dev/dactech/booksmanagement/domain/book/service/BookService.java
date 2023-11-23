@@ -5,6 +5,7 @@ import dev.dactech.booksmanagement.domain.book.entity.Book;
 import dev.dactech.booksmanagement.domain.book.repository.BookRepository;
 import dev.dactech.booksmanagement.domain.book_category.entity.BookCategory;
 import dev.dactech.booksmanagement.domain.book_category.repository.BookCategoryRepository;
+import dev.dactech.booksmanagement.infrastructure.exception.ApiException;
 import dev.dactech.booksmanagement.infrastructure.utilies.MessageCode;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,7 @@ public class BookService {
     private BookCategoryRepository bookCategoryRepository;
 
     @Transactional(rollbackOn = {Exception.class})
-    public MessageCode add(BookCreationReq req) {
+    public MessageCode add(BookCreationReq req) throws ApiException {
         if (req.getCategoryId() == null && req.getCategoryName() == null) return MessageCode.MISSING_CATEGORY_FIELD;
         if (req.getQuantity() == null) return MessageCode.MISSING_QUANTITY_FIELD;
         if (req.getTitle() == null) return MessageCode.MISSING_TITLE_FIELD;
@@ -56,8 +57,7 @@ public class BookService {
             bookRepository.save(book);
             return MessageCode.SUCCESS;
         } catch (Exception e) {
-            System.out.println(e);
-            return MessageCode.ERROR_BOOK_CREATION;
+            throw new ApiException(MessageCode.ERROR_BOOK_CREATION);
         }
     }
     public List<Book> getAll() {
