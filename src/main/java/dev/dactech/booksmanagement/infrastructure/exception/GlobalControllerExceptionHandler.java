@@ -28,6 +28,7 @@ public class GlobalControllerExceptionHandler{
             response.setCode(500);
             response.setMessage("System Error !");
         }
+        LOGGER.warn(response);
         return ResponseEntity.ok(response);
     }
 }

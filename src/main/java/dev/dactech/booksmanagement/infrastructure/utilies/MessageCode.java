@@ -14,6 +14,7 @@ public enum MessageCode {
     MISSING_LIBRARIAN_FIELD(406, "MISSING_LIBRARIAN_FIELD", "Không được để trống trường librarian"),
     MISSING_LIMIT_DATE_FIELD(407, "MISSING_LIMIT_DATE_FIELD", "Không được để trống trường limit date"),
     MISSING_TITLE_FIELD(408, "MISSING_TITLE_FIELD", "Không được để trống trường title"),
+    LACK_OPERATION(1000, "LACK_OPERATION", "Thiếu toán tử"),
     ;
     private int code;
     private String message;

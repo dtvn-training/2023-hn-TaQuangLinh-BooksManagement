@@ -1,6 +1,7 @@
 package dev.dactech.booksmanagement.app.endpoint.rest;
 
 import dev.dactech.booksmanagement.domain.book.dto.request.BookCreationReq;
+import dev.dactech.booksmanagement.domain.book.dto.response.BooksRes;
 import dev.dactech.booksmanagement.domain.book.entity.Book;
 import dev.dactech.booksmanagement.domain.book.service.BookService;
 import dev.dactech.booksmanagement.infrastructure.dto.response.ResponseList;
@@ -26,7 +27,7 @@ public class BookController {
         return response(bookService.add(req));
     }
     @GetMapping("")
-    public ResponseEntity<ResponseList<Book>> getAll(
+    public ResponseEntity<ResponseList<BooksRes>> getAll(
             @RequestParam(required = false) String title,
             @RequestParam(name = "category_id", required = false) Integer categoryId,
             @RequestParam(required = false) String authors,
@@ -35,7 +36,7 @@ public class BookController {
             @RequestParam(name = "delete", required = false) Integer deleted,
             @RequestParam(name = "sort_by", required = false) String sortBy
             ){
-        List<Book> books = bookService.getAll(title, categoryId, authors, dateAdded, librarianId, deleted, sortBy);
+        List<BooksRes> books = bookService.getAll(title, categoryId, authors, dateAdded, librarianId, deleted, sortBy);
         return response(books);
     }
 }
