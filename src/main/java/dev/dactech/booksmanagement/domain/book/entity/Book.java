@@ -1,5 +1,7 @@
 package dev.dactech.booksmanagement.domain.book.entity;
 
+import dev.dactech.booksmanagement.domain.book_category.entity.BookCategory;
+import dev.dactech.booksmanagement.domain.librarian.entity.Librarian;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,8 +28,9 @@ public class Book {
     @Column(nullable = false)
     private String title;
 
-    @Column(name = "category_id", nullable = false)
-    private Integer categoryId;
+    @ManyToOne
+    @JoinColumn(name = "category_id", nullable = false)
+    private BookCategory category;
 
     @Column(name = "authors")
     private String authors;
@@ -42,8 +45,9 @@ public class Book {
     @Column(name = "date_added", nullable = false)
     private LocalDateTime dateAdded;
 
-    @Column(name = "librarian_id", nullable = false)
-    private Integer librarianId;
+    @ManyToOne
+    @JoinColumn(name = "librarian_id", nullable = false)
+    private Librarian librarian;
 
     @Column
     private String image;

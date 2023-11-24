@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 public class Librarian {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     @Column(name = "name", nullable = false)
     private String name;
