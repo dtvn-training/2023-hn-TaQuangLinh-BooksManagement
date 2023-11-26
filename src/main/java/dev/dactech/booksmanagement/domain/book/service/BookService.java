@@ -1,6 +1,7 @@
 package dev.dactech.booksmanagement.domain.book.service;
 
 import dev.dactech.booksmanagement.domain.book.dto.request.BookCreationReq;
+import dev.dactech.booksmanagement.domain.book.dto.response.BookDetailsRes;
 import dev.dactech.booksmanagement.domain.book.dto.response.BooksRes;
 import dev.dactech.booksmanagement.domain.book.entity.Book;
 import dev.dactech.booksmanagement.domain.book.repository.BookRepository;
@@ -13,17 +14,16 @@ import dev.dactech.booksmanagement.infrastructure.utilies.MessageCode;
 import dev.dactech.booksmanagement.infrastructure.utilies.Utility;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+import static dev.dactech.booksmanagement.infrastructure.utilies.Utility.formatDateTimeToString;
 import static dev.dactech.booksmanagement.infrastructure.utilies.Utility.paginationAndSorting;
 
 @Service
@@ -97,5 +97,28 @@ public class BookService {
             response.add(booksRes);
         }
         return response;
+    }
+
+    public BookDetailsRes getBookDetails(Integer id) {
+        Optional<Book> bookOptional = bookRepository.findById(id);
+        if(bookOptional.isPresent()){
+            Book book = bookOptional.get();
+            return BookDetailsRes.builder()
+                    .id(book.getId())
+                    .title(book.getTitle())
+                    .category(book.getCategory().getName())
+                    .authors(book.getAuthors())
+                    .publishingDate(formatDateTimeToString(book.getPublishingDate(), null))
+                    .quantity(book.getQuantity())
+                    .librarian(book.getLibrarian().getName())
+                    .image(book.getImage())
+                    .limitDate(book.getLimitDate())
+                    .deletedAt(formatDateTimeToString(book.getDeletedAt(), null))
+                    .dateAdded(formatDateTimeToString(book.getDateAdded(), null))
+            .build();
+        }
+        else {
+            throw new ApiException(MessageCode.NOT_FOUND_ID);
+        }
     }
 }

@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
@@ -14,7 +14,7 @@ public class BookCreationReq {
     private String categoryName;
     private Integer categoryId;
     private String authors;
-    private LocalDateTime publishingDate;
+    private LocalDate publishingDate;
     private Integer quantity;
     private Integer librarianId;
     private Integer limitDate;

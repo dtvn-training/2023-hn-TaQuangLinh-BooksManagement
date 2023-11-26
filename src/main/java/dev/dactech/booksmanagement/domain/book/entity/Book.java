@@ -11,6 +11,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -36,7 +37,7 @@ public class Book {
     private String authors;
 
     @Column(name = "publishing_date")
-    private LocalDateTime publishingDate;
+    private LocalDate publishingDate;
 
     @Column(nullable = false)
     private int quantity;
