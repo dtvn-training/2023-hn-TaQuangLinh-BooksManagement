@@ -24,6 +24,12 @@ public class ApiException extends RuntimeException{
         this.message = messageCode.getMessage();
         this.description = messageCode.getDescription();
     }
+    public ApiException(MessageCode messageCode, Object data){
+        this.code = messageCode.getCode();
+        this.message = messageCode.getMessage();
+        this.description = messageCode.getDescription();
+        this.data = data;
+    }
     public void setMessageCode(MessageCode messageCode){
         this.code = messageCode.getCode();
         this.message = messageCode.getMessage();

@@ -1,6 +1,7 @@
 package dev.dactech.booksmanagement.app.endpoint.rest;
 
 import dev.dactech.booksmanagement.domain.book.dto.request.BookCreationReq;
+import dev.dactech.booksmanagement.domain.book.dto.request.BookUpdateReq;
 import dev.dactech.booksmanagement.domain.book.dto.response.BookDetailsRes;
 import dev.dactech.booksmanagement.domain.book.dto.response.BooksRes;
 import dev.dactech.booksmanagement.domain.book.service.BookService;
@@ -45,5 +46,16 @@ public class BookController {
     public ResponseEntity<Response<BookDetailsRes>> getById(@PathVariable(name = "id") Integer id){
         BookDetailsRes bookDetailsRes = bookService.getBookDetails(id);
         return response(bookDetailsRes);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateBook(@PathVariable(name = "id") Integer id, @RequestBody BookUpdateReq req){
+        req.setId(id);
+        return response(bookService.updateBook(req));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteBook(@PathVariable(name = "id") Integer id){
+        return response(bookService.deleteBook(id));
     }
 }

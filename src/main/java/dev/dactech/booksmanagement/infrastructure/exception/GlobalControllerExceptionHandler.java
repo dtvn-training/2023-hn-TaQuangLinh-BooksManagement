@@ -23,10 +23,12 @@ public class GlobalControllerExceptionHandler{
             ApiException apiException = (ApiException) ex;
             response.setCode(apiException.getCode());
             response.setMessage(apiException.getMessage());
+            response.setDescription(apiException.getDescription());
             response.setData(apiException.getData());
         } else {
             response.setCode(500);
             response.setMessage("System Error !");
+            response.setDescription("Hệ thống đang bảo trì");
         }
         LOGGER.warn(response);
         return ResponseEntity.ok(response);

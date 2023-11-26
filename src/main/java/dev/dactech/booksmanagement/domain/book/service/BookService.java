@@ -1,6 +1,7 @@
 package dev.dactech.booksmanagement.domain.book.service;
 
 import dev.dactech.booksmanagement.domain.book.dto.request.BookCreationReq;
+import dev.dactech.booksmanagement.domain.book.dto.request.BookUpdateReq;
 import dev.dactech.booksmanagement.domain.book.dto.response.BookDetailsRes;
 import dev.dactech.booksmanagement.domain.book.dto.response.BooksRes;
 import dev.dactech.booksmanagement.domain.book.entity.Book;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -82,26 +84,38 @@ public class BookService {
 
         Pageable pageable = paginationAndSorting(page, size, sortBy);
 
-        List<Book> books = bookRepository.getAll(title, categoryId, authors, date, librarianId, deleted, pageable);
+        try {
+            List<Book> books = bookRepository.getAll(title, categoryId, authors, date, librarianId, deleted, pageable);
 
-        List<BooksRes> response = new ArrayList<>();
-        for (Book item : books){
-            BooksRes booksRes = BooksRes.builder()
-                    .id(item.getId())
-                    .title(item.getTitle())
-                    .authors(item.getAuthors())
-                    .category(item.getCategory().getName())
-                    .image(item.getImage())
-                    .quantity(item.getQuantity())
-                    .build();
-            response.add(booksRes);
+            List<BooksRes> response = new ArrayList<>();
+            for (Book item : books){
+                BooksRes booksRes = BooksRes.builder()
+                        .id(item.getId())
+                        .title(item.getTitle())
+                        .authors(item.getAuthors())
+                        .category(item.getCategory().getName())
+                        .image(item.getImage())
+                        .quantity(item.getQuantity())
+                        .build();
+                response.add(booksRes);
+            }
+            return response;
+        }catch (Exception e){
+            throw new ApiException(MessageCode.FAIL);
         }
-        return response;
     }
 
     public BookDetailsRes getBookDetails(Integer id) {
-        Optional<Book> bookOptional = bookRepository.findById(id);
-        if(bookOptional.isPresent()){
+        Optional<Book> bookOptional;
+        try{
+            bookOptional = bookRepository.findById(id);
+        }catch (Exception e){
+            throw new ApiException(MessageCode.FAIL);
+        }
+        if(!bookOptional.isPresent()){
+            throw new ApiException(MessageCode.NOT_FOUND_ID, "id = " + id);
+        }
+        else {
             Book book = bookOptional.get();
             return BookDetailsRes.builder()
                     .id(book.getId())
@@ -114,11 +128,62 @@ public class BookService {
                     .image(book.getImage())
                     .limitDate(book.getLimitDate())
                     .deletedAt(formatDateTimeToString(book.getDeletedAt(), null))
-                    .dateAdded(formatDateTimeToString(book.getDateAdded(), null))
-            .build();
+                    .dateAdded(formatDateTimeToString(book.getDateAdded().toLocalDate(), null))
+                    .build();
         }
-        else {
+    }
+
+    public MessageCode updateBook(BookUpdateReq req) {
+        Optional<Book> bookOptional = bookRepository.findById(req.getId());
+        if (!bookOptional.isPresent()){
             throw new ApiException(MessageCode.NOT_FOUND_ID);
+        }else{
+            Book book = bookOptional.get();
+            if (req.getTitle() != null) {
+                book.setTitle(req.getTitle());
+            }
+            if (req.getCategoryId() != null){
+                BookCategory bookCategory = bookCategoryRepository.findById(req.getCategoryId()).orElse(null);
+                if (bookCategory == null)throw new ApiException(MessageCode.NOT_FOUND_ID);
+                book.setCategory(bookCategory);
+            }
+            if (req.getAuthors() != null){
+                book.setAuthors(req.getAuthors());
+            }
+            if (req.getPublishingDate() != null){
+                book.setPublishingDate(req.getPublishingDate());
+            }
+            if (req.getQuantity() != null){
+                book.setQuantity(req.getQuantity());
+            }
+            if (req.getLibrarianId() != null){
+                Librarian librarian = librarianRepository.findById(req.getLibrarianId()).orElse(null);
+                if (librarian == null) throw new ApiException(MessageCode.NOT_FOUND_ID);
+                book.setLibrarian(librarian);
+            }
+            if (req.getLimitDate() != null){
+                book.setLimitDate(req.getLimitDate());
+            }
+            if (req.getImage() != null){
+                book.setImage(req.getImage());
+            }
+            try {
+                bookRepository.save(book);
+                return MessageCode.SUCCESS;
+            }catch (Exception e){
+                throw new ApiException(MessageCode.FAIL);
+            }
+        }
+    }
+
+    public MessageCode deleteBook(Integer id) {
+        try {
+            Book book = bookRepository.findById(id).orElse(null);
+            if (book == null) throw new ApiException(MessageCode.NOT_FOUND_ID);
+            bookRepository.delete(book);
+            return MessageCode.SUCCESS;
+        }catch (Exception e){
+            throw new ApiException(MessageCode.FAIL);
         }
     }
 }
