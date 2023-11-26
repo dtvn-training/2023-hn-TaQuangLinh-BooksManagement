@@ -34,10 +34,10 @@ public class BookSpecification implements Specification<Book> {
                 return criteriaBuilder.lessThanOrEqualTo(root.get(criteria.getKey()), criteria.getValue().toString());
             case ">=":
                 return criteriaBuilder.greaterThanOrEqualTo(root.get(criteria.getKey()), criteria.getValue().toString());
-            case "is":
-                return criteriaBuilder.isMember(root.get(criteria.getKey()), criteria.getValue().toString());
-            case "isnot":
-                return criteriaBuilder.greaterThanOrEqualTo(root.get(criteria.getKey()), criteria.getValue().toString());
+//            case "is":
+//                return criteriaBuilder.isMember(root.get(criteria.getKey()), criteria.getValue().toString());
+//            case "isnot":
+//                return criteriaBuilder.greaterThanOrEqualTo(root.get(criteria.getKey()), criteria.getValue().toString());
             default:
                 throw new ApiException();
 

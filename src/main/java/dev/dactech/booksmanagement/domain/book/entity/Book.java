@@ -41,7 +41,6 @@ public class Book {
     @Column(nullable = false)
     private int quantity;
 
-    @CreationTimestamp
     @Column(name = "date_added", nullable = false)
     private LocalDateTime dateAdded;
 

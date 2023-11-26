@@ -4,6 +4,7 @@ import dev.dactech.booksmanagement.domain.book.dto.request.BookCreationReq;
 import dev.dactech.booksmanagement.domain.book.dto.response.BooksRes;
 import dev.dactech.booksmanagement.domain.book.entity.Book;
 import dev.dactech.booksmanagement.domain.book.service.BookService;
+import dev.dactech.booksmanagement.domain.book.service.BookSpecification;
 import dev.dactech.booksmanagement.infrastructure.dto.response.ResponseList;
 import dev.dactech.booksmanagement.infrastructure.exception.ApiException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +18,13 @@ import static dev.dactech.booksmanagement.app.service.ResponseFactory.response;
 @RestController
 @RequestMapping(value = "/api/books")
 public class BookController {
-
-    @Autowired
-    private BookService bookService;
+    private final BookService bookService;
+    public BookController(BookService bookService){
+        this.bookService = bookService;
+    }
 
     @PostMapping("")
     public ResponseEntity<?> add(@RequestBody BookCreationReq req) throws ApiException {
-        System.out.println(req);
         return response(bookService.add(req));
     }
     @GetMapping("")
@@ -34,9 +35,11 @@ public class BookController {
             @RequestParam(name = "date_added", required = false) String dateAdded,
             @RequestParam(name = "librarian_id", required = false) Integer librarianId,
             @RequestParam(name = "delete", required = false) Integer deleted,
-            @RequestParam(name = "sort_by", required = false) String sortBy
+            @RequestParam(name = "sort_by", required = false) String sortBy,
+            @RequestParam(required = false) Integer page,
+            @RequestParam(required = false) Integer size
             ){
-        List<BooksRes> books = bookService.getAll(title, categoryId, authors, dateAdded, librarianId, deleted, sortBy);
+        List<BooksRes> books = bookService.getAll(title, categoryId, authors, dateAdded, librarianId, deleted, sortBy, page, size);
         return response(books);
     }
 }
