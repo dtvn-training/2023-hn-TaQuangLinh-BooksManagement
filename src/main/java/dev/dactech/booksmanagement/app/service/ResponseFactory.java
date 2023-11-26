@@ -13,7 +13,7 @@ import static dev.dactech.booksmanagement.infrastructure.utilies.MessageCode.SUC
 public class ResponseFactory {
 
     public static <T> ResponseEntity<Response<T>> response(MessageCode messageCode, T data){
-        Response response = new Response();
+        Response<T> response = new Response<>();
         response.setMessageCode(messageCode);
         response.setData(data);
         return ResponseEntity.ok(response);

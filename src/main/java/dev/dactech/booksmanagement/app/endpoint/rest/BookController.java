@@ -1,17 +1,15 @@
 package dev.dactech.booksmanagement.app.endpoint.rest;
 
 import dev.dactech.booksmanagement.domain.book.dto.request.BookCreationReq;
+import dev.dactech.booksmanagement.domain.book.dto.response.BookDetailsRes;
 import dev.dactech.booksmanagement.domain.book.dto.response.BooksRes;
-import dev.dactech.booksmanagement.domain.book.entity.Book;
 import dev.dactech.booksmanagement.domain.book.service.BookService;
-import dev.dactech.booksmanagement.domain.book.service.BookSpecification;
+import dev.dactech.booksmanagement.infrastructure.dto.response.Response;
 import dev.dactech.booksmanagement.infrastructure.dto.response.ResponseList;
 import dev.dactech.booksmanagement.infrastructure.exception.ApiException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import static dev.dactech.booksmanagement.app.service.ResponseFactory.response;
@@ -41,5 +39,11 @@ public class BookController {
             ){
         List<BooksRes> books = bookService.getAll(title, categoryId, authors, dateAdded, librarianId, deleted, sortBy, page, size);
         return response(books);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Response<BookDetailsRes>> getById(@PathVariable(name = "id") Integer id){
+        BookDetailsRes bookDetailsRes = bookService.getBookDetails(id);
+        return response(bookDetailsRes);
     }
 }
