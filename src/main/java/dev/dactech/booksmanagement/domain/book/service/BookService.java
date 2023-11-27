@@ -13,34 +13,26 @@ import dev.dactech.booksmanagement.domain.book_category.entity.BookCategory;
 import dev.dactech.booksmanagement.domain.book_category.repository.BookCategoryRepository;
 import dev.dactech.booksmanagement.domain.librarian.entity.Librarian;
 import dev.dactech.booksmanagement.domain.librarian.repository.LibrarianRepository;
-import dev.dactech.booksmanagement.infrastructure.excel.Excel;
 import dev.dactech.booksmanagement.infrastructure.excel.Header;
 import dev.dactech.booksmanagement.infrastructure.exception.ApiException;
 import dev.dactech.booksmanagement.infrastructure.utilies.MessageCode;
 import dev.dactech.booksmanagement.infrastructure.utilies.Utility;
 import jakarta.transaction.Transactional;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.hibernate.boot.registry.classloading.spi.ClassLoaderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
-import static dev.dactech.booksmanagement.infrastructure.excel.Excel.*;
+import static dev.dactech.booksmanagement.infrastructure.excel.Excel.writeInventoryBookToExcel;
+import static dev.dactech.booksmanagement.infrastructure.excel.Excel.writeOverdueToExcel;
 import static dev.dactech.booksmanagement.infrastructure.utilies.Utility.*;
+import static java.time.temporal.ChronoUnit.DAYS;
 
 @Service
 public class BookService {
@@ -248,7 +240,8 @@ public class BookService {
                     .startTime(formatToDateTime(String.valueOf(item[4]), "yyyy-MM-dd HH:mm:ss.S"))
                     .expiredDate(formatToDate(String.valueOf(item[5]), "yyyy-MM-dd"))
                             .build();
-            dataItem.setNumOfDayOverdue(ChronoUnit.DAYS.between(dataItem.getStartTime().toLocalDate(), dataItem.getExpiredDate()));
+            dataItem.setNumOfDayOverdue(Math.abs(DAYS.between(LocalDate.now(), dataItem.getExpiredDate())));
+
             data.add(dataItem);
         }
 

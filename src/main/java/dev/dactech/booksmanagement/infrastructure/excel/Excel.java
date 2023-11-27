@@ -4,6 +4,7 @@ import dev.dactech.booksmanagement.domain.book.dto.excel.ExportInventoryExcel;
 import dev.dactech.booksmanagement.domain.book.dto.excel.ExportOverdueExcel;
 import dev.dactech.booksmanagement.infrastructure.exception.ApiException;
 import dev.dactech.booksmanagement.infrastructure.utilies.MessageCode;
+import dev.dactech.booksmanagement.infrastructure.utilies.Utility;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.functions.T;
 import org.apache.poi.ss.usermodel.*;
@@ -101,7 +102,7 @@ public class Excel {
             sheet.autoSizeColumn(i);
         }
 
-        String outputPath = "C:/Users/Admin/Downloads/"+ UUID.randomUUID() + ".xlsx";
+        String outputPath = "D:/week1/"+ UUID.randomUUID() + ".xlsx";
         OutputStream os;
         try {
             os = new FileOutputStream(outputPath);
@@ -122,6 +123,9 @@ public class Excel {
         font.setFontName("Times New Roman");
         CellStyle cellStyle = sheet.getWorkbook().createCellStyle();
         cellStyle.setFont(font);
+        CellStyle horizontalCenter = sheet.getWorkbook().createCellStyle();
+        horizontalCenter.setAlignment(HorizontalAlignment.CENTER);
+        horizontalCenter.setFont(font);
 
         Row row;
         int index = 1;
@@ -131,14 +135,17 @@ public class Excel {
             Cell cell = row.createCell(0);
             cell.setCellStyle(cellStyle);
             cell.setCellValue(item.getId());
+            cell.setCellStyle(horizontalCenter);
 
             cell = row.createCell(1);
             cell.setCellStyle(cellStyle);
             cell.setCellValue(item.getStudentCode());
+            cell.setCellStyle(horizontalCenter);
 
             cell = row.createCell(2);
             cell.setCellStyle(cellStyle);
             cell.setCellValue(item.getBookId());
+            cell.setCellStyle(horizontalCenter);
 
             cell = row.createCell(3);
             cell.setCellStyle(cellStyle);
@@ -146,15 +153,16 @@ public class Excel {
 
             cell = row.createCell(4);
             cell.setCellStyle(cellStyle);
-            cell.setCellValue(item.getStartTime());
+            cell.setCellValue(Utility.formatDateTimeToString(item.getStartTime(), null));
 
             cell = row.createCell(5);
             cell.setCellStyle(cellStyle);
-            cell.setCellValue(item.getExpiredDate());
+            cell.setCellValue(Utility.formatDateTimeToString(item.getExpiredDate(), null));
 
             cell = row.createCell(6);
             cell.setCellStyle(cellStyle);
             cell.setCellValue(item.getNumOfDayOverdue());
+            cell.setCellStyle(horizontalCenter);
 
             index++;
         }
@@ -162,7 +170,7 @@ public class Excel {
             sheet.autoSizeColumn(i);
         }
 
-        String outputPath = "C:/Users/Admin/Downloads/"+ UUID.randomUUID() + ".xlsx";
+        String outputPath = "D:/week1/"+ UUID.randomUUID() + ".xlsx";
         OutputStream os;
         try {
             os = new FileOutputStream(outputPath);

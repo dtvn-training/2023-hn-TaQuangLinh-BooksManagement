@@ -1,6 +1,5 @@
 package dev.dactech.booksmanagement.infrastructure.utilies;
 
-import org.apache.coyote.Request;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -8,6 +7,8 @@ import org.springframework.data.domain.Sort;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+
+import static java.time.temporal.ChronoUnit.DAYS;
 
 public class Utility {
     public static Pageable paginationAndSorting(int page, int size, String sortBy){
@@ -58,6 +59,6 @@ public class Utility {
     }
 
     public static void main(String[] args) {
-        System.out.println(getFieldOfSort("add:desc"));
+        System.out.println(DAYS.between(LocalDate.of(2023, 11, 5), LocalDate.of(2023, 12, 1)));
     }
 }

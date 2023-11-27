@@ -42,7 +42,9 @@ public class BookRepositoryCustomImpl implements BookRepositoryCustom {
                 "where " +
                 "    book_student.book_id = books.id and " +
                 "book_student.student_id = students.id and " +
-                "end_date is null;");
+                "end_date is null " +
+                "having " +
+                "expired_date <= DATE(NOW())");
 
         Query query = entityManager.createNativeQuery(sql.toString());
         List<Object[]> result = query.getResultList();
