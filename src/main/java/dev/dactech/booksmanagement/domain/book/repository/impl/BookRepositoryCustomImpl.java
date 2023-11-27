@@ -32,4 +32,21 @@ public class BookRepositoryCustomImpl implements BookRepositoryCustom {
 
         return result;
     }
+
+    @Override
+    public List<Object[]> getOverdue(){
+        StringBuilder sql = new StringBuilder("" +
+                "select book_student.id as id, code, books.id, title, start_date, DATE(DATE_ADD(start_date, interval books.limit_date day)) as expired_date " +
+                "from " +
+                "    book_student, students, books " +
+                "where " +
+                "    book_student.book_id = books.id and " +
+                "book_student.student_id = students.id and " +
+                "end_date is null;");
+
+        Query query = entityManager.createNativeQuery(sql.toString());
+        List<Object[]> result = query.getResultList();
+
+        return result;
+    }
 }
