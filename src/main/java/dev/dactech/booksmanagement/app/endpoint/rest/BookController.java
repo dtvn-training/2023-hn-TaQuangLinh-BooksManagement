@@ -4,6 +4,7 @@ import dev.dactech.booksmanagement.domain.book.dto.request.BookCreationReq;
 import dev.dactech.booksmanagement.domain.book.dto.request.BookUpdateReq;
 import dev.dactech.booksmanagement.domain.book.dto.response.BookDetailsRes;
 import dev.dactech.booksmanagement.domain.book.dto.response.BooksRes;
+import dev.dactech.booksmanagement.domain.book.dto.response.ExportRes;
 import dev.dactech.booksmanagement.domain.book.service.BookService;
 import dev.dactech.booksmanagement.infrastructure.dto.response.Response;
 import dev.dactech.booksmanagement.infrastructure.dto.response.ResponseList;
@@ -11,6 +12,7 @@ import dev.dactech.booksmanagement.infrastructure.exception.ApiException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 import static dev.dactech.booksmanagement.app.service.ResponseFactory.response;
@@ -57,5 +59,10 @@ public class BookController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteBook(@PathVariable(name = "id") Integer id){
         return response(bookService.deleteBook(id));
+    }
+
+    @GetMapping("/export-inventory")
+    public ResponseEntity<Response<ExportRes>> exportInventory() throws IOException {
+        return response(bookService.exportInventory());
     }
 }

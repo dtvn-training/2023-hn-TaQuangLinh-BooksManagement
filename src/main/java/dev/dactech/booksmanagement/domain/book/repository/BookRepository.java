@@ -23,4 +23,6 @@ public interface BookRepository extends JpaRepository<Book, Integer>, BookReposi
             "((:deleted = 0 or deleted_at is null) and (:deleted = 1 or deleted_at is null)) "
             , nativeQuery = true)
     public List<Book> getAll(String title, Integer categoryId, String authors, LocalDate dateAdded, Integer librarianId, Integer deleted, Pageable pageable);
+
+
 }

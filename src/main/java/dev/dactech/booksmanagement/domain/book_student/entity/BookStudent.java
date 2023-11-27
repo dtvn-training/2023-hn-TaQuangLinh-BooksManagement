@@ -1,5 +1,8 @@
 package dev.dactech.booksmanagement.domain.book_student.entity;
 
+import dev.dactech.booksmanagement.domain.book.entity.Book;
+import dev.dactech.booksmanagement.domain.librarian.entity.Librarian;
+import dev.dactech.booksmanagement.domain.student.entity.Student;
 import jakarta.persistence.*;
 
 import lombok.AllArgsConstructor;
@@ -20,11 +23,13 @@ public class BookStudent {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "student_id", nullable = false)
-    private Integer studentId;
+    @ManyToOne
+    @JoinColumn(name = "student_id", nullable = false)
+    private Student student;
 
-    @Column(name = "book_id", nullable = false)
-    private Integer bookId;
+    @ManyToOne
+    @JoinColumn(name = "book_id", nullable = false)
+    private Book book;
 
     @Column(name = "start_date", nullable = false)
     private LocalDateTime startDate;
@@ -32,6 +37,7 @@ public class BookStudent {
     @Column(name = "end_date")
     private LocalDateTime endDate;
 
-    @Column(name = "librarian_id", nullable = false)
-    private Integer librarianId;
+    @ManyToOne
+    @JoinColumn(name = "librarian_id", nullable = false)
+    private Librarian librarian;
 }

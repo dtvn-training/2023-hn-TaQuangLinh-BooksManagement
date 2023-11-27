@@ -1,30 +1,43 @@
 package dev.dactech.booksmanagement.domain.book.service;
 
+import dev.dactech.booksmanagement.domain.book.dto.excel.ExportInventoryExcel;
 import dev.dactech.booksmanagement.domain.book.dto.request.BookCreationReq;
 import dev.dactech.booksmanagement.domain.book.dto.request.BookUpdateReq;
 import dev.dactech.booksmanagement.domain.book.dto.response.BookDetailsRes;
 import dev.dactech.booksmanagement.domain.book.dto.response.BooksRes;
+import dev.dactech.booksmanagement.domain.book.dto.response.ExportRes;
 import dev.dactech.booksmanagement.domain.book.entity.Book;
 import dev.dactech.booksmanagement.domain.book.repository.BookRepository;
 import dev.dactech.booksmanagement.domain.book_category.entity.BookCategory;
 import dev.dactech.booksmanagement.domain.book_category.repository.BookCategoryRepository;
 import dev.dactech.booksmanagement.domain.librarian.entity.Librarian;
 import dev.dactech.booksmanagement.domain.librarian.repository.LibrarianRepository;
+import dev.dactech.booksmanagement.infrastructure.excel.Excel;
+import dev.dactech.booksmanagement.infrastructure.excel.Header;
 import dev.dactech.booksmanagement.infrastructure.exception.ApiException;
 import dev.dactech.booksmanagement.infrastructure.utilies.MessageCode;
 import dev.dactech.booksmanagement.infrastructure.utilies.Utility;
 import jakarta.transaction.Transactional;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.hibernate.boot.registry.classloading.spi.ClassLoaderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
+import static dev.dactech.booksmanagement.infrastructure.excel.Excel.*;
 import static dev.dactech.booksmanagement.infrastructure.utilies.Utility.formatDateTimeToString;
 import static dev.dactech.booksmanagement.infrastructure.utilies.Utility.paginationAndSorting;
 
@@ -185,5 +198,47 @@ public class BookService {
         }catch (Exception e){
             throw new ApiException(MessageCode.FAIL);
         }
+    }
+
+    public ExportRes exportInventory() throws IOException {
+        List<Object[]> bookInventoryList = bookRepository.getInventoryBook();
+        List<ExportInventoryExcel> data = new ArrayList<>();
+        for (Object[] item : bookInventoryList){
+            ExportInventoryExcel dataItem = ExportInventoryExcel.builder()
+                    .id((int)item[0])
+                    .title(String.valueOf(item[1]))
+                    .category(String.valueOf(item[2]))
+                    .authors(String.valueOf(item[3]))
+                    .quantity((long)item[4])
+                    .image(String.valueOf(item[5]))
+                    .dateAdded(String.valueOf(item[6]))
+                    .build();
+            data.add(dataItem);
+        }
+
+        Workbook workbook = getWorkbook("", Excel.ExcelType.XLSX);
+        Sheet sheet = workbook.createSheet();
+        Header header = new Header();
+        header.getTitle().put(0, "ID");
+        header.getTitle().put(1, "Title");
+        header.getTitle().put(2, "Category");
+        header.getTitle().put(3, "Authors");
+        header.getTitle().put(4, "Quantity");
+        header.getTitle().put(5, "Date added");
+        header.getTitle().put(6, "Image");
+
+        writeInventoryBookToExcel(sheet, header, data);
+        String outputPath = "C:/Users/Admin/Downloads/"+UUID.randomUUID() + ".xlsx";
+        try {
+            OutputStream os = new FileOutputStream(outputPath);
+            workbook.write(os);
+            os.close();
+        } catch (IOException e) {
+            throw new ApiException(MessageCode.ERROR_WRITE_EXCEL_FILE);
+        }
+        workbook.close();
+        return ExportRes.builder()
+                .link(outputPath)
+                .build();
     }
 }

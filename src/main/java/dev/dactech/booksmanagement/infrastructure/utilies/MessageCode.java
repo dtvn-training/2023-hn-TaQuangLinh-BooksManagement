@@ -15,6 +15,7 @@ public enum MessageCode {
     MISSING_LIMIT_DATE_FIELD(4007, "MISSING_LIMIT_DATE_FIELD", "Không được để trống trường limit date"),
     MISSING_TITLE_FIELD(4008, "MISSING_TITLE_FIELD", "Không được để trống trường title"),
     NOT_FOUND_ID(4009, "NOT_FOUND_ID", "Không tìm thấy thông tin với id"),
+    ERROR_WRITE_EXCEL_FILE(4010, "ERROR_WRITE_EXCEL_FILE", "Lỗi ghi file excel"),
     LACK_OPERATION(1000, "LACK_OPERATION", "Thiếu toán tử"),
     ;
     private int code;
