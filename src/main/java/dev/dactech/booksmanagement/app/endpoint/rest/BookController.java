@@ -65,4 +65,9 @@ public class BookController {
     public ResponseEntity<Response<ExportRes>> exportInventory() throws IOException {
         return response(bookService.exportInventory());
     }
+
+    @GetMapping("/export-overdue")
+    public ResponseEntity<Response<ExportRes>> exportOverdue() throws IOException {
+        return response(bookService.exportOverdue());
+    }
 }

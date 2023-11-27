@@ -1,6 +1,7 @@
 package dev.dactech.booksmanagement.domain.book.service;
 
 import dev.dactech.booksmanagement.domain.book.dto.excel.ExportInventoryExcel;
+import dev.dactech.booksmanagement.domain.book.dto.excel.ExportOverdueExcel;
 import dev.dactech.booksmanagement.domain.book.dto.request.BookCreationReq;
 import dev.dactech.booksmanagement.domain.book.dto.request.BookUpdateReq;
 import dev.dactech.booksmanagement.domain.book.dto.response.BookDetailsRes;
@@ -12,34 +13,26 @@ import dev.dactech.booksmanagement.domain.book_category.entity.BookCategory;
 import dev.dactech.booksmanagement.domain.book_category.repository.BookCategoryRepository;
 import dev.dactech.booksmanagement.domain.librarian.entity.Librarian;
 import dev.dactech.booksmanagement.domain.librarian.repository.LibrarianRepository;
-import dev.dactech.booksmanagement.infrastructure.excel.Excel;
 import dev.dactech.booksmanagement.infrastructure.excel.Header;
 import dev.dactech.booksmanagement.infrastructure.exception.ApiException;
 import dev.dactech.booksmanagement.infrastructure.utilies.MessageCode;
 import dev.dactech.booksmanagement.infrastructure.utilies.Utility;
 import jakarta.transaction.Transactional;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.hibernate.boot.registry.classloading.spi.ClassLoaderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
-import static dev.dactech.booksmanagement.infrastructure.excel.Excel.*;
-import static dev.dactech.booksmanagement.infrastructure.utilies.Utility.formatDateTimeToString;
-import static dev.dactech.booksmanagement.infrastructure.utilies.Utility.paginationAndSorting;
+import static dev.dactech.booksmanagement.infrastructure.excel.Excel.writeInventoryBookToExcel;
+import static dev.dactech.booksmanagement.infrastructure.excel.Excel.writeOverdueToExcel;
+import static dev.dactech.booksmanagement.infrastructure.utilies.Utility.*;
+import static java.time.temporal.ChronoUnit.DAYS;
 
 @Service
 public class BookService {
@@ -216,8 +209,6 @@ public class BookService {
             data.add(dataItem);
         }
 
-        Workbook workbook = getWorkbook("", Excel.ExcelType.XLSX);
-        Sheet sheet = workbook.createSheet();
         Header header = new Header();
         header.getTitle().put(0, "ID");
         header.getTitle().put(1, "Title");
@@ -227,18 +218,49 @@ public class BookService {
         header.getTitle().put(5, "Date added");
         header.getTitle().put(6, "Image");
 
-        writeInventoryBookToExcel(sheet, header, data);
-        String outputPath = "C:/Users/Admin/Downloads/"+UUID.randomUUID() + ".xlsx";
         try {
-            OutputStream os = new FileOutputStream(outputPath);
-            workbook.write(os);
-            os.close();
-        } catch (IOException e) {
+            String outputPath = writeInventoryBookToExcel(header, data);
+            return ExportRes.builder()
+                    .link(outputPath)
+                    .build();
+        }catch (Exception e){
             throw new ApiException(MessageCode.ERROR_WRITE_EXCEL_FILE);
         }
-        workbook.close();
-        return ExportRes.builder()
-                .link(outputPath)
-                .build();
+    }
+
+    public ExportRes exportOverdue() throws IOException {
+        List<Object[]> overdueList = bookRepository.getOverdue();
+        List<ExportOverdueExcel> data = new ArrayList<>();
+        for (Object[] item : overdueList){
+            ExportOverdueExcel dataItem = ExportOverdueExcel.builder()
+                    .id((long)item[0])
+                    .studentCode(String.valueOf(item[1]))
+                    .bookId((int)item[2])
+                    .bookName(String.valueOf(item[3]))
+                    .startTime(formatToDateTime(String.valueOf(item[4]), "yyyy-MM-dd HH:mm:ss.S"))
+                    .expiredDate(formatToDate(String.valueOf(item[5]), "yyyy-MM-dd"))
+                            .build();
+            dataItem.setNumOfDayOverdue(Math.abs(DAYS.between(LocalDate.now(), dataItem.getExpiredDate())));
+
+            data.add(dataItem);
+        }
+
+        Header header = new Header();
+        header.getTitle().put(0, "ID");
+        header.getTitle().put(1, "Student code");
+        header.getTitle().put(2, "Book id");
+        header.getTitle().put(3, "Book Name");
+        header.getTitle().put(4, "Start time");
+        header.getTitle().put(5, "Expired date");
+        header.getTitle().put(6, "Number of day overdue");
+
+        try{
+            String outputPath = writeOverdueToExcel(header, data);
+            return ExportRes.builder()
+                    .link(outputPath)
+                    .build();
+        }catch (Exception e){
+            throw new ApiException(MessageCode.ERROR_WRITE_EXCEL_FILE);
+        }
     }
 }
